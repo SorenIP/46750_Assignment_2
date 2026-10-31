@@ -52,17 +52,19 @@ conditions, big-M or SOS1 complementarity, strong-duality linearization of the p
 ```bash
 python main.py                  # loads the base case (16 members, day d1) and prints a summary
 python main.py --members        # ... plus the Assignment 1 summary of every member
+python main.py --model-c        # solve centralized Model C and save its dispatch and settlement results
 python main.py --demo           # ... plus the scenario-generation demonstration (Question 3)
 ```
 
 ## 2. Repository structure
 
 ```
-main.py                        Entry point: load a community -> summarize (extend with one function per experiment)
+main.py                        Entry point: load a community -> summarize or run Model C
 src/
   data_loader.py               load_community("base", day="d1") -> CommunityData:
                                  .members     one Assignment 1 InputData per member (same attribute names as in Assignment 1)
                                  .contract    ContractData: cap, penalty, discount, individual caps and shares of model I
+  model_c.py                   centralized Model C LP, dual internal prices, member settlements, result export
   scenario_generation.py       Question 3: independent preference scenarios per member, merged into joint scenarios (numpy only)
 data/
   appliance_params.json        SHARED catalogue (Assignment 1 format): the loads FL_L1-FL_L4 (linear disutility 0.25-2.0 DKK/kWh), PV_01_S, BAT_01_S
@@ -77,11 +79,9 @@ results/                       Written by your code (git-ignored)
 requirements.txt, environment.yaml, .gitignore
 ```
 
-No model code is shipped. Your Assignment 1 code base - the `FlexibleConsumerModel` built on `InputData`,
-your scenario helpers and your plotting - is the natural starting point: every member of the community
-*is* an Assignment 1 consumer, loaded into the same `InputData` class (Section 4). Build the community
-models of the assignment (R, I, C, DP, ...) as one parametrized class with switches rather than as copies,
-and the variations of the base case (Section 4.3) as named configurations.
+Model C is implemented in `src/model_c.py` as a centralized linear program on the `InputData` objects
+loaded for each member. Models R, I, DP, and the scenario-based models are not implemented yet; build
+those on the same loaded data and document each experiment and its outputs.
 
 ## 3. How to use the code
 
@@ -118,6 +118,10 @@ scaling = sg.draw_scaling_scenarios(spec, seed=1)                 # {quantity: {
 joint = sg.merge_scenarios(app, par, scaling, mode="aligned")     # joint scenarios with .index, .theta, .members
 
 ```
+
+Run Model C from the repository root with `python main.py --model-c` (optional `--community NAME` and
+`--day d1` ... `d7`). It writes `summary.json` and `dispatch.csv` under
+`results/<community>/model_c_<day>/`.
 
 **Conventions.** The hourly resolution makes kW and kWh/h numerically interchangeable, as in Assignment 1.
 `InputData` carries the *full* tariffs of `bus_params.json`; the discount of the contract is in

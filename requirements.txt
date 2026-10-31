@@ -4,6 +4,7 @@
 
 gurobipy>=11.0          # optimisation solver interface (bilevel/single-level MIQP of Questions 2-3: NonConvex=2)
 numpy>=1.26
+scipy>=1.11
 pandas>=2.1
 matplotlib>=3.8
 
