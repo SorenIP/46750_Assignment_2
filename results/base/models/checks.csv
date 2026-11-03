@@ -1,0 +1,12 @@
+check,R,I,C
+strong_duality_gap_DKK,1.0658141036401503e-14,1.0658141036401503e-14,1.7053025658242404e-13
+import_export_overlap_kWh,0.0,0.0,
+energy_balance_kWh,2.220446049250313e-16,1.1102230246251565e-16,
+daily_energy_shortfall_kWh,3.552713678800501e-15,3.552713678800501e-15,
+load_bound_violation_kWh,0.0,0.0,
+charge_discharge_overlap_kWh,0.0,0.0,
+soc_end_minus_start_kWh,0.0,0.0,
+internal_balance_kWh,,,7.105427357601002e-15
+member_energy_balance_kWh,,,1.734723475976807e-16
+price_vs_import_price_plus_rent,,,0.0
+cap_rent_zero_when_cap_slack,,,0.0

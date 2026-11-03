@@ -1,0 +1,6 @@
+check,value
+strong_duality_gap_DKK,1.7053025658242404e-13
+internal_balance_kWh,7.105427357601002e-15
+price_vs_import_price_plus_rent,0.0
+cap_rent_zero_when_cap_slack,0.0
+exceed_def_error_kW,0.0

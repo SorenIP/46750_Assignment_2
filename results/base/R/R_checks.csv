@@ -1,0 +1,8 @@
+check,max_over_members
+strong_duality_gap_DKK,1.0658141036401503e-14
+import_export_overlap_kWh,0.0
+energy_balance_kWh,2.220446049250313e-16
+daily_energy_shortfall_kWh,3.552713678800501e-15
+load_bound_violation_kWh,0.0
+charge_discharge_overlap_kWh,0.0
+soc_end_minus_start_kWh,0.0
