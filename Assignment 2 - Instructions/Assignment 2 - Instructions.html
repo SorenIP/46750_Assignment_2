@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>46750 – Assignment 2 (2026)</title>
+<script>
+MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] }, svg: { fontCache: 'global' } };
+</script>
+<script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+<style>
+  :root { --dtu-red: #990000; --ink: #1a1a1a; --muted: #555; --q: #f4f4f4; --note: #eef5fb; --bonus: #2e7d32; }
+  html { color-scheme: light; }
+  body { margin: 0; background: #fff; color: var(--ink); font-family: Georgia, "Times New Roman", Times, serif; font-size: 11pt; line-height: 1.5; }
+  .page { max-width: 880px; margin: 0 auto; padding: 36px 40px 64px; }
+  header img { height: 44px; display: block; }
+  h1 { font-size: 20pt; text-align: center; margin: 28px 0 4px; }
+  h2.subtitle { font-size: 13pt; text-align: center; font-weight: normal; color: var(--muted); margin: 0 0 6px; }
+  p.deadline { text-align: center; margin: 0 0 28px; }
+  h2 { font-size: 14pt; color: var(--dtu-red); margin: 36px 0 10px; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+  h3 { font-size: 12pt; margin: 24px 0 6px; }
+  h4 { font-size: 11pt; margin: 16px 0 4px; font-style: italic; }
+  p { margin: 6px 0 10px; }
+  ul, ol { margin: 4px 0 10px; padding-left: 26px; }
+  li { margin-bottom: 3px; }
+  table { border-collapse: collapse; margin: 10px auto; font-size: 9.5pt; }
+  table.pts { page-break-inside: avoid; }
+  th, td { border: 1px solid #bbb; padding: 3px 7px; text-align: left; vertical-align: top; }
+  th { background: #f2f2f2; text-align: center; }
+  table.pts td { text-align: right; } table.pts td:first-child { text-align: left; } table.pts tr.total td { font-weight: bold; }
+  .caption { font-size: 9.5pt; text-align: center; color: var(--muted); margin: 4px auto 16px; max-width: 92%; page-break-before: avoid; break-before: avoid; }
+  .box { border: 1px solid #ddd; background: var(--q); padding: 8px 14px; margin: 12px 0; }
+  .box.rq { background: #fbeeee; border-color: #e3b8b8; }
+  .box.exp { background: var(--note); border-color: #c7d9ea; }
+  .box.bonus { background: #eef6ee; border-color: #bcd9bc; }
+  .box p:first-child { margin-top: 4px; }
+  .lbl { font-weight: bold; color: var(--dtu-red); }
+  .box.bonus .lbl { color: var(--bonus); }
+  .box.exp .lbl { color: #2c5a85; }
+  .box.tip { background: #fdf7e7; border-color: #e6d3a3; }
+  .box.tip .lbl { color: #7a5c00; }
+  .box.tip p { margin: 4px 0; }
+  thead { display: table-header-group; }
+  table.levels { width: 100%; font-size: 9.5pt; }
+  table.levels td.crit { font-weight: bold; width: 7em; }
+  table.levels td.p { text-align: center; white-space: nowrap; }
+  .small { font-size: 9.5pt; color: var(--muted); }
+  code { font-family: Menlo, Consolas, monospace; font-size: 0.9em; }
+  ol.refs { padding-left: 28px; font-size: 10pt; } ol.refs li { margin-bottom: 4px; }
+  @media print { .page { padding: 0; } h2, h3 { page-break-after: avoid; } tr, .box { page-break-inside: avoid; } table.levels thead { display: table-header-group; } }
+</style>
+</head><body><div class="page">
+<h1>46750 – Optimization in Modern Power Systems</h1>
+<h2 class="subtitle">Assignment 2: An Energy Community Providing Grid Services</h2>
+<p class="deadline"><strong>Published:</strong> Monday 19 October 2026 &nbsp;·&nbsp; <strong>Deadline:</strong> Friday 4 December 2026, 23:59 (DTU Learn)</p>
+<h2>Instructions</h2>
+<h3>Deliverables</h3>
+<p>This assignment is carried out in the <strong>same groups as Assignment 1</strong> and builds on its models, data and code. Each group hands in one submission in DTU Learn with two parts.</p>
+<ul>
+<li><strong>A concise report</strong>, following the formatting rules of Assignment 1 (the LaTeX template is recommended, not mandatory). It contains: a <strong>nomenclature table</strong> with all notations; <strong>one section per question</strong>, written as one argument that answers the question; if needed, a <strong>short appendix</strong>; the <strong>participation table</strong> (contribution of each student, in %, per evaluation criterion and overall); the <strong>AI-use disclosure</strong>. Each question section gives compact mathematical formulations (every new notation defined, every new equation explained, only what changes from the previous question restated), the motivation of each modelling choice, and the main numerical results with the figures and tables that support them. The appendix holds material that supports the argument without belonging in the main text: derivations (KKT conditions, big-M linearization), extended result tables, parameter values and solver settings needed to interpret the results.</li>
+<li><strong>Working, documented and structured code</strong>, as a <code>.zip</code> attached to the submission or as a link to the group's repository (accessible to the graders, unchanged after the deadline). The README must let the graders reproduce every number and figure of the report, with one command per experiment. All data used in the experiments is part of this deliverable, including the scenarios generated for Question 3 and any data you add; document it in the README.</li>
+</ul>
+<div class="box tip">
+<p><span class="lbl">Practical advice.</span> Keep the Assignment 1 notation and state only what changes. Name model variants with superscripts (\(\mathcal I^{peak}\), \(\mathcal{DP}^{hourly}\), \(\mathcal{SDP}^{CC}\)), so that the reader always knows which model a number comes from.</p>
+</div>
+<h3>Grading</h3>
+<p>The assignment has three questions. The group grade is between 0 and 100 points, distributed over the three questions and the four grading criteria of the course as in Table 1.</p>
+<table class="pts">
+<thead>
+<tr>
+<th style="text-align: left;">Criterion</th>
+<th style="text-align: right;">Question 1</th>
+<th style="text-align: right;">Question 2</th>
+<th style="text-align: right;">Question 3</th>
+<th style="text-align: right;">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Mathematical models</td>
+<td>8</td>
+<td>10</td>
+<td>12</td>
+<td>30</td>
+</tr>
+<tr>
+<td style="text-align: left;">Writing</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>30</td>
+</tr>
+<tr>
+<td style="text-align: left;">Code</td>
+<td>3</td>
+<td>3</td>
+<td>4</td>
+<td>10</td>
+</tr>
+<tr>
+<td style="text-align: left;">Numerical results</td>
+<td>8</td>
+<td>11</td>
+<td>11</td>
+<td>30</td>
+</tr>
+<tr class="total">
+<td style="text-align: left;">Total</td>
+<td>29</td>
+<td>34</td>
+<td>37</td>
+<td>100</td>
+</tr>
+</tbody>
+</table>
+<p class="caption">Table 1: Points per question and criterion.</p>
+<p>The criteria and the individual participation adjustment in <em>Grading guidelines and examples (</em>DTU Learn &gt; Assignments) still apply. The grading rubric provided in <em>Grading guidelines and examples</em> describes the standard for each criterion, not a checklist. A criterion is&nbsp;<em>insufficient/not achieved</em> when a deliverable is missing, copied without adaptation or wrong; when results fail their own validation or consistency checks; when metrics are undefined or have no reference; when modelling choices are unmotivated; or when figures and numbers are narrated rather than interpreted.&nbsp;In addition, each question lists&nbsp;<strong>what must be delivered. </strong></p>
+<p>Some modelling choices are left open. The choices you make are part of the evaluation and graded under Mathematical models, its justification under Writing; be ready to defend both at the oral exam. Which sensitivity analyses you run and which metrics you report is also your choice, unless a question states otherwise (Table 11 lists the dimensions that can be varied, Table 12 examples of metrics). Numerical results rewards the relevance, depth and justification of these choices over their number. An error in a formulation that is implemented faithfully is penalized under Mathematical models, not under Code. A correct analysis that is hard to follow loses points under Writing; a clear analysis that is trivial or based on wrong values loses points under Numerical results.</p>
+<p><strong>Final grade.</strong> The group grade is adjusted individually from the participation table. The adjusted Assignment 2 grade and the Assignment 1 grade count 50% each. Individual bonus points (weekly exercises, Kahoots, model validation and visualization challenges) are added to this preliminary grade (0–100). The result is converted to the Danish 7-scale and may be adjusted by one level up or down after the oral exam. Group and preliminary grades are not released before the oral exam.</p>
+<h3>Suggested timeline</h3>
+<p>The assignment spans seven weeks. Each lecture unlocks a part of it (Table 2). Questions 1 and 2 are unlocked in Week 7; the two-stage model of Question 3 in Week 8; its scenario studies and its risk-averse and chance-constrained extensions in Weeks 9 to 11. From Week 12 nothing new is unlocked: refine the numerical experiments, the analysis of results, the figures and the insights of all questions.</p>
+<table class="timeline">
+<thead>
+<tr>
+<th style="width: 11%;">Week (date)</th>
+<th style="width: 30%;">Lecture topic</th>
+<th>Unlocked in the assignment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7 (21/10)</td>
+<td>Complementarity modelling &amp; applications</td>
+<td><strong>Question 1</strong>: \(\mathcal R\), \(\mathcal I\), \(\mathcal C\), duals and settlement. <strong>Question 2</strong>: the bilevel model \(\mathcal{DP}\), its KKT and strong-duality reformulation, the budget-balance and individual-rationality requirements.</td>
+</tr>
+<tr>
+<td>8 (28/10)</td>
+<td>Introduction to optimization under uncertainty</td>
+<td><strong>Question 3</strong>: the risk-neutral two-stage model \(\mathcal{SDP}^{E}\), the baseline, the in-sample / out-of-sample protocol. Scenarios come from the provided module.</td>
+</tr>
+<tr>
+<td>9 (04/11)</td>
+<td>Multi-stage stochastic optimization, scenario generation</td>
+<td><strong>Question 3</strong>: the scenario hyper-parameters, the \(N\) and stability studies.</td>
+</tr>
+<tr>
+<td>10 (11/11)</td>
+<td>Risk-aware optimization</td>
+<td><strong>Question 3</strong>: risk aversion (CVaR) as a variation; risk metrics on the realized cost (quantiles, CVaR).</td>
+</tr>
+<tr>
+<td>11 (18/11)</td>
+<td>Stochastic constraints</td>
+<td><strong>Question 3</strong>: the chance-constrained cap \(\mathcal{SDP}^{CC}\), the \(\varepsilon\) study, the guarantees of the scenario approximation.</td>
+</tr>
+<tr>
+<td>12 (25/11)</td>
+<td>Visualization &amp; storytelling</td>
+<td>Nothing new. Refine experiments, analyses, figures and insights for all questions.</td>
+</tr>
+<tr>
+<td>13 (02/12)</td>
+<td>Visualization &amp; storytelling (competition)</td>
+<td>Report and code finalized; submission Friday 04/12, 23:59.</td>
+</tr>
+</tbody>
+</table>
+<p class="caption">Table 2: What each week's lecture unlocks in the assignment.</p>
+<h2>Problem Setting</h2>
+<p>All questions share the setting below. It is loaded in Question 1 and reused afterwards.</p>
+<p>A distribution system operator (DSO) faces congestion on the feeder that serves an aggregation of flexible prosumers. Without contract, as in Assignment 1, every consumer schedules against the day-ahead price alone, imports and exports at the full tariffs, and exchanges nothing with its neighbours. The sum of their imports is the profile the DSO faces today. In some hours it exceeds what the feeder can carry; this exceedance is the congestion to reduce (Figure 1).</p>
+<figure style="margin: 10px 0 4px; text-align: center;"><img src="pic0_20261020161214402.png" alt="No contract" style="max-width: 100%; height: auto;">
+<p class="caption">Figure 1: Reference case, no contract. Every consumer is behind its own meter; the DSO meters and charges each one.</p>
+</figure>
+<p>Rather than reinforcing the feeder, the DSO offers a <strong>capacity limitation contract</strong> of the kind proposed in [1]: a bilateral agreement that rewards the contract holder for reducing its import in congested hours. The consumers are the flexible consumers of Assignment 1 (section <em>Input data and numerical experiments</em>). They can respond to the offer in three ways, shown in Figures 1–3 with the quantities the DSO meters and charges in each case.</p>
+<p><strong>Notation.</strong> The notation of Assignment 1 is kept: gross import and export \(q^{imp}_{i,t},q^{exp}_{i,t}\) of consumer \(i\), day-ahead energy price \(p_t\), grid tariffs \(\tau^{imp},\tau^{exp}\). New are the aggregated gross import and export of all consumers at a single connection point, \(P^{imp}_t,P^{exp}_t\ge0\), and the contract parameters below.</p>
+<h3>Capacity Limitation Contracts</h3>
+<p>The contract between the DSO and the holder has three parameters:</p>
+<ul>
+<li>an hourly cap \(\bar P^{DSO}_t\) on the holder's import at the connection point;</li>
+<li>a penalty \(\alpha^{DSO}\) (DKK/kWh) on every kWh imported above the cap, in any hour;</li>
+<li>a discount \(\beta^{DSO}\in[0,1]\) on the grid tariffs of the <em>metered exchange</em>: the holder pays \((1-\beta^{DSO})\,\tau^{imp}\) per kWh imported below the cap and \((1-\beta^{DSO})\,\tau^{exp}\) per kWh exported at the connection point.</li>
+</ul>
+<p>Two contract types are considered (Figures 2 and 3).</p>
+<p><strong>(a) Individual contracts.</strong> Each consumer signs on its own meter. The cap is split between consumers: consumer \(i\) receives \(\bar P^{DSO}_{i,t}=\kappa_i\,\bar P^{DSO}_t\), with \(\sum_i\kappa_i=1\) and \(\kappa_i\) proportional to its net energy imported over the day without contract (the reference case). Each consumer thus gets the community's cap profile scaled to its share of the aggregated import. It pays the discounted tariffs on its own metered import and export and the penalty on its own exceedance. Other split rules are described in the contract file (Table 11).</p>
+<figure style="margin: 10px 0 4px; text-align: center;"><img src="pic1_20261020161214391.png" alt="Individual contracts" style="max-width: 100%; height: auto;">
+<p class="caption">Figure 2: (a) Individual contracts. The DSO meters and charges each consumer on its own import and export.</p>
+</figure>
+<p><strong>(b) Community contract.</strong> The consumers form an energy community: a legal entity, run by a community manager, that trades with the grid through a single connection point and holds one contract for all members. There is one meter, one cap on the community's import \(P^{imp}_t\), and the discounted tariffs apply to the metered exchange \(P^{imp}_t,P^{exp}_t\). Behind the meter, members exchange energy freely. There is no network to model inside the community, only the hourly balance \(\sum_i q_{i,t}=P^{imp}_t-P^{exp}_t\), with \(q_{i,t}=q^{imp}_{i,t}-q^{exp}_{i,t}\) the net consumption of member \(i\). Energy exchanged between members never crosses the meter and pays no grid tariff.</p>
+<figure style="margin: 10px 0 4px; text-align: center;"><img src="pic2_20261020161214409.png" alt="Community contract" style="max-width: 100%; height: auto;">
+<p class="caption">Figure 3: (b) Community contract. The DSO meters and charges the community on its aggregated import and export at the connection point; nothing is charged behind the meter.</p>
+</figure>
+<p>Question 1 compares the reference case with contract types (a) and (b). Type (a) against the reference tells whether the contract is worth signing alone. Type (b) against (a) tells what pooling flexibility behind the meter is worth. Type (b) against the reference tells whether the contract is worth signing as a community, for a given member mix.</p>
+<h3>Decisions: Dispatch and Cost Allocation</h3>
+<p>Under a given contract, the consumers maximize their surplus while providing the capacity limitation service. Under individual contracts (a) - model \( \mathcal I \) - each consumer schedules its flexible loads and assets independently and is charged by the DSO based on its own flows. It pays: the day-ahead energy price for its energy purchased (or sold), the discounted grid tariffs for its imports below their cap and its exports, and the penalty for its imports exceeding the hourly cap. Under a community contract (b), the DSO charges the community manager directly based on the aggregated flows of the community at the connection point. The goal of the manager is to maximize the community's welfare, expressed as the sum of all community members' utilities minus the community manager's costs (payments made to the DSO). The manager must therefore: a) coordinate the dispatch of all the community members to achieve this goal; and b) allocate the community costs among its members and settle all payments made within the community: it decides how much each member pays, or is paid, for its own net consumption. Two distinct setups are considered for these decisions:</p>
+<ul>
+<li><strong>Centralized dispatch (direct control) - model \( \mathcal C \):</strong> The manager knows every member's preferences (utilities and constraints) and dispatches their flexible loads and assets (e.g. PV, battery) in one optimization that maximizes the community's social welfare. This benchmark is an upper bound on the flexibility the community can provide and on its welfare under a given contract. All members' net hourly imports (or exports) are charged at a uniform hourly price, computed as the dual variable of the internal balance equation. Inside the community this price replaces every cost a member would face alone.</li>
+<li><strong>Dynamic pricing (indirect control) - model \( \mathcal{DP} \).</strong> The manager posts hourly internal prices, the same for every member, and the members schedule their own loads and assets in response. The manager chooses the prices that maximize welfare, anticipating the responses of the community members. All members' net hourly imports (or exports) are charged at the posted price. Inside the community this price replaces every cost a member would face alone.</li>
+</ul>
+<p>Across the questions, the information of the decision-maker and the timing of the decisions change: from perfect information and one day-ahead decision, to uncertain member preferences. Table 3 summarizes the three questions.</p>
+<table class="pts" style="width: 100%;">
+<thead>
+<tr>
+<th style="text-align: left;">Question</th>
+<th style="text-align: left;">Contract types</th>
+<th style="text-align: left;">Decision-maker (dispatch)</th>
+<th style="text-align: left;">Coordination</th>
+<th style="text-align: left;">When</th>
+<th style="text-align: left;">Information</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Q1 — Is the community worth forming?</strong></td>
+<td style="text-align: left;">(a) individual contracts vs. (b) community contract</td>
+<td style="text-align: left;">(a) individual consumers; (b) community manager</td>
+<td style="text-align: left;">(a) no (independent); (b) yes (direct control)</td>
+<td style="text-align: left;">day-ahead, once</td>
+<td style="text-align: left;">perfect (preferences and PV availability)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Q2 — Can price signals achieve what central dispatch does?</strong></td>
+<td style="text-align: left;">(b) community contract</td>
+<td style="text-align: left;">individual consumers</td>
+<td style="text-align: left;">yes (indirect control through price signals)</td>
+<td style="text-align: left;">day-ahead, once</td>
+<td style="text-align: left;">perfect (preferences and PV availability)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Q3 — How to steer consumers whose response is uncertain?</strong></td>
+<td style="text-align: left;">as Q2</td>
+<td style="text-align: left;">as Q2</td>
+<td style="text-align: left;">as Q2</td>
+<td style="text-align: left;">as Q2</td>
+<td style="text-align: left;"><strong>imperfect</strong> (uncertain member preferences)</td>
+</tr>
+</tbody>
+</table>
+<p class="caption">Table 3: Contract types and decision settings of the three questions.</p>
+<h2>Question 1 — Is the community worth forming?</h2>
+<h3>Problem statement</h3>
+<p>The DSO offers the contract described above in the hope of reducing congestion. Before anything is signed, the prospective community manager wants to know what the contract is worth, and to whom. The community members decide together whether to sign it, individually or as a community, and they all take the same decision. The sixteen consumers have three options: sign nothing and dispatch their appliances independently against energy prices and existing grid tariffs (reference case, model \(\mathcal R\)); sign individually and dispatch their own appliances independently against individual&nbsp; caps (contract (a), model \(\mathcal I\)); sign collectively and let the community manager dispatch their appliances centrally against one shared cap (contract (b) under direct control, model \(\mathcal C\)). In this question the manager has perfect information on preferences, constraints and PV forecast, controls every appliance directly. This case is used as ideal benchmark for Questions 2 and 3.</p>
+<div class="box rq">
+<p><span class="lbl">Investigate:</span> How much flexibility can the DSO extract from the community, and under which contract terms (discount, cap, penalty) is signing a contract worth it for the community (as a whole)? When is signing individual and/or community contracts beneficial for the community as a whole? When the contract benefits the community as a whole, who benefits inside it: does every type of consumer gain under the dual settlement of the central dispatch (c0mpared to not signing or signing individually), and is the manager's budget balanced?</p>
+</div>
+<h3>What must be delivered</h3>
+<ul>
+<li><strong>Three models formulated mathematically and implemented in the base case</strong>, with the problem class and its consequence for duality stated: \(\mathcal R\) (no contract, full tariffs); \(\mathcal I\) (own contract: discounted tariffs on own flows, own cap \(\bar P^{DSO}_{i,t}=\kappa_i\bar P^{DSO}_t\), penalty on own exceedance); \(\mathcal C\) (central dispatch maximizing the community's welfare under the contract terms at the connection point and the hourly balance behind the meter).&nbsp;</li>
+<li><strong>One sensitivity study over the most relevant contract terms</strong>, comparing \(\mathcal R\), \(\sum_i\mathcal I_i\) and \(\mathcal C\) on selected metrics representing what a contract is worth from two points of view: the community as a whole, and the DSO. State the reference model against which these metrics are defined, and the point of view of each metric.</li>
+<li><strong>Analysis of the settlement mechanism in the community contract on the base case</strong>, or a selected relevant variation of the base case, in which the community contract benefits the community as a whole, with individual rationality tested member by member against \(\mathcal I\) and against \(\mathcal R\) and analyzed by consumer type, and the community manager's budget balance analyzed.</li>
+</ul>
+<div class="box tip">
+<p><span class="lbl">Practical advice.</span> Build \(\mathcal R\), \(\mathcal I\) and \(\mathcal C\) as one parametrized class with switches, not as copies. \(\mathcal{DP}\) and the models of Question 3 share its members, contract and interface, and the variations of Table 11 become named configurations.</p>
+</div>
+<h3>Expected insights (examples)</h3>
+<p>How much flexibility the contract extracts: which classes of members shift their loads, in which hours and in which order as the cap tightens, and what the DSO gets from different contract terms (Number of hours kept below the cap, max cap exceedance, overall peak reduction and shift). Why \(\mathcal C\) can never cost the community more than \(\sum_i\mathcal I_i\), why the same does not hold against \(\mathcal R\), and hence why a contract can be worth signing together but not alone, or not at all, and which contract terms (discount, cap) separate these cases. Why the community's overall gain is not always synonymous with every member's gain: which consumer types benefit the most, which ones would be better off signing the contract alone (or not at all) and why their interests diverge from the community's.</p>
+<h3>Suggested steps</h3>
+<ol>
+<li>Load the base case (Tables 8 and 9) and compute \(\mathcal R\): check the resulting congestion in the feeder.</li>
+<li>Modify the individual objectives in \(\mathcal R\) to formulate \(\mathcal I\) as as one parametrized model. Validate it in the base case (impact on congestion).</li>
+<li>Formulate \(\mathcal C\) as one parametrized model (reused in Questions 2 and 3) and validate it in the base case (impact on congestion).</li>
+<li>Define the metrics that represent the contract value from the DSO and community's perspective.</li>
+<li>Select the relevant sensitivity analysis to conduct; hypothesize on the impact of each parameter sweep on the metrics. Run the numerical experiments and answer the 1stpart of the question from the DSO and community's perspectives.</li>
+<li>On the base case (or variation chosen), read the dual variables of \(\mathcal C\), compute the settlement for the community members; test the budget balance of the community manager and individual rationality of the members; answer the 2nd part of the question by type of consumer.</li>
+<li>Conclude across the different numerical experiments, and give recommendations for each decision-maker: DSO, community manager, members.</li>
+</ol>
+<h2>Question 2 — <strong>Can price signals achieve what the central dispatch does</strong>?</h2>
+<h3>Problem statement</h3>
+<p>Now the community manager cannot control the members' loads directly. Once a day, after the day-ahead prices are published and the DSO has communicated the cap, the manager posts an internal price \(x_t\) for every hour of the next day, the same for every member (model \(\mathcal{DP}\)). The day-ahead price, the discounted grid tariffs and the cap penalty are paid by the manager alone, on the community's metered exchange at the connection point. Each member then schedules its appliances on its own, as in Assignment 1, and the manager knows perfectly every member's preferences and how they react to the posted prices.</p>
+<p>The prices are the manager's only instrument, and they should be designed such that they achieve two things: First, to steer individual dispatches towards the optimal of \(\mathcal C\); second, to allocate costs among community members adequately - contrary to the internal prices of \(\mathcal C\) which were shown to sometimes over-collect the congestion rent and leave some members worse off than alone. This is inspired by the mechanism in [1] (should be adapted).</p>
+<div class="box rq">
+<p><span class="lbl">Investigate:</span>&nbsp;When the manager controls only the hourly price that all members face, how much of the value and the flexibility achieved by \( \mathcal C \) can be recovered, and which property of the members explains the answer? Can the same hourly prices also redistribute the benefit of the community and allocate costs among its members adequately, such that they are all "happy" to sign the community contract rather than staying alone? And what does this requirement cost the community as a whole? When one uniform price for everybody cannot achieve all this, which members stand in the way?</p>
+</div>
+<h3>What must be delivered</h3>
+<ul>
+<li><strong>The pricing problem \(\mathcal{DP}\)</strong> including the explicit formulation of the community manager's and each member's optimization problem (their variables, objective, constraints); the description of the solution concept and the steps for the tractable reformulation of the manager's problem as a Mixed Integer Linear Program (MILP). The manager's objective is formulated and its implication for the members stated.</li>
+<li><strong>Variants of the pricing problem </strong><strong>\(\mathcal{DP}^{\,x}\) </strong>built as a single parameterized model, which ensure budget balance for the community manager (payments collected equal the manager's costs at the connection point) and individual rationality (no member is worse off from signing the community contract under this ricing scheme), and can be adapted to deal with potential infeasibility due to the combination of these requirements and uniform prices (same for all members) - how to extend the models to deal with this infeasibility (e.g. by allowing per-consumer price discrimination or relaxing some requirements) is your choice and should be justified.</li>
+<li><strong>Metrics and numerical experiments.</strong> Study the pricing problem in three steps: with the cap only, with budget balance added, then with individual rationality added. The decomposition is mandatory; study the impact of these requirements on the individual members' and the community as a whole. Define the releavant metrics and their reference point (see Table 12 for examples). Together they must show, against the relevant models in Question 1: how much of the community's value (welfare, flexibility, etc) these prices can recover; how the requirements impact individual members; and when a requirement cannot be met, which members prevent it and how much would have to be given up to meet it.</li>
+<li><strong>At least one sensitivity study</strong> on the contract terms (Table 11), and how they impact whether a uniform price can meet the duals requirements; report the feasibility of each step, its efficiency cost and the blocking members along the study.</li>
+<li><strong>Short discussion about indifference (no implementation required): </strong>identify what happens when the best response of a consumer is not unique, whether the community manager is <em>optimistic</em> or <em>pessimistic,</em>&nbsp;how this may expose them in practice.</li>
+</ul>
+<h3>Expected insights (examples)</h3>
+<p>Why one price per hour is enough (or not) to reproduce the dispatch of \(\mathcal C\) in the optimistic sense. Why a member's optimal response is a set and not a point when its disutility is linear, and how the manager's anticipated dispatch picks one element of that set. In which hours the price is pinned to the discounted import or export price, and in which the cap or a marginal member sets it (a merit order of flexibility). What the two requirements then do to these prices: with a uniform price for everybody every change moves all schedules at once. Whether both requirements can be met when prices are uniform and under various conditions on the contract terms, which members are blocking when they cannot, and why. An interpretation of who pays for the congestion and who is paid for flexibility when prices serve a single or dual purpose.</p>
+<h3>Suggested steps</h3>
+<ol>
+<li>Write the members' best response to posted prices \(x_t\) and their KKT conditions (what changes from Assignment 1?). Note what buying and selling at the same price implies for PV and battery owners and for the community manager's budget.</li>
+<li>Formulate and reformulate the manager's problem; implement it as a parametrized model on your \(\mathcal C\) code.</li>
+<li>Solve the base case; verify whether \(\mathcal C\) is reproduced; relate the posted prices to the dual prices of Question 1; locate the indifferent member-hours.</li>
+<li>Build the model variants to account for budget balance, individual rationality and potential infeasibility - choose the objective and constraints; validate them on the base case and verify the impact on the per-member and overall community benefits and flexibility.</li>
+<li>Choose relevant metrics, design numerical experiments and sensitivity studies to answer the questions above, hypothesize about the impact of the sensitivity studies and expected insights before observing their results.</li>
+<li>Answer the questions, with a recommendation on which requirements to impose and on whether a uniform price (same for everybody) is suitable.</li>
+</ol>
+<h2>Question 3 — How to steer consumers whose response is uncertain?</h2>
+<h3>Problem statement</h3>
+<p>Return to the pricing problem \(\mathcal{DP}\) in Question 2. When posting the optimal internal prices, the manager does not know perfectly the preferences of the consumers, and how they will respond to the prices. As a result, the responses the manager anticipates are also uncertain, and so are the community's aggregated imports/exports, cap exceedance, and costs. File&nbsp;<code>preference_uncertainty_params.json</code> defines the uncertainty: each member's <strong>reference profile</strong> is scaled by one random parameter, and its daily minimum follows (it equals the daily reference energy of the scenario). This uncertainty therefore enters directly each members'&nbsp;<em>constraints </em>and impacts the manager's <em>objective </em>and <em>constraints </em>(individual rationality and budget balance). Each joint scenario combines independent draws for every member (see how <code>src/scenario_generation.py</code> draws and merges them and how you can set the hyper-parameters in Section&nbsp;<em>Input Data and Numerical Experiments</em>). Uncertainty on the members' disutility slope \(c^L\) is available in the same file as a variation (see Table 11). The prices are posted at the same time - for all hours of the following day - before the realization of these uncertain parameters (all realized at the same time), and the members' response depends on these realizations.</p>
+<div class="box rq">
+<p><span class="lbl">Investigate: </span>How should the community manager protect itself against potential violations of important properties of the posted prices (e.g. individual rationality, budget balance) and weigh the risk of incurring high penalties when the members' responses to its prices are uncertain? What do different modelling approaches cost the community manager (against seen and unsee realizations)?</p>
+</div>
+<h3>What must be delivered</h3>
+<ul>
+<li><strong>The stochastic pricing models \(\mathcal{SDP}^{\,x}\), </strong>implemented as a single parametrized model:<strong> </strong>scenario-based extensions of \(\mathcal{DP}\) on a common in-sample set of \(N\) joint scenarios, with one price vector and scenario-indexed lower levels, grid-interface variables and payments. They differ in how they hedge against risks of high costs in their objectives (expectation and/or parametrized risk measures), and the level of constraint satisfaction they aim for (in expectation, over all scenarios, with a stated violation probability joint over the hours and consumers or individually, and/or with a stated bound on the tails of the violations). These modelling choices are yours to make; they should be explicitly stated and argued. These models should be validated against the base case. The base stochastic model is considered to be risk-neutral and implement constraints on the price properties in expectation. At least two additional representations of the objective and the stochastic constraints should be formulated. For every model variation, specify its formulation (only what changes), the model class, and its size as a function of \(N\) and the number of members.</li>
+<li><strong>The deterministic baseline</strong> <strong>\(\mathcal{DP}\),</strong> against which each stochastic model is evaluated, implemented over the expected parameters.&nbsp;</li>
+<li><strong>Evaluation protocol.</strong> Evaluate and compare the stochastic models on the in-sample scenarios, and against unseen (out-of-sample) scenarios: at least 100 out-of-sample joint scenario. Scenarios and seeds reported</li>
+<li><strong>Metrics. </strong>You define relevant metrics; they should be stated and reported side by side for every model comparison. They must show at least: (i) the constraint satisfaction level targeted (in-sample) and achieved (out-of-sample) by each model - in magnitude and/or frequency of violations; (ii) the objective value targeted (in-sample) and achieved (out-of-sample) by each model, and the relevant components of this objective value - as a distribution and not only a mean; (iii) solution times (see examples in Table 12).</li>
+<li><strong>One study of accuracy against performance</strong>, on at least the base stochastic model: the number of in-sample scenarios \(N\) varied over a few values, with the in-sample scenarios nested or redrawn under common random numbers and the same out-of-sample set throughout. It must show how the in- and out-of-sample performances (objective and/or constraint satisfaction) converge with \(N\), and what each additional scenario costs in solution time. A cross validation with a second in-sample draw at the same \(N\) is a good stability check, but not a requirement.</li>
+<li><strong>One sensitivity study across the stochastic model variations</strong>, on the parameter that tunes the level of constraint satisfaction a formulation provides and how much it hedges against risks of high costs (see Table 11 for examples). The models must be compared on the same in-sample and out-of-sample scenarios, and the study must show what is gained in terms of performances (objective and constraint satisfaction) in- and out-of-sample. The hyper-parameters of the uncertainty, the uncertain quantity (e.g. disutility slope \(c^L\)) and the contract terms are further variations that you can choose to study (see Table 11), not a substitute for this one.</li>
+</ul>
+<div class="box tip">
+<p><span class="lbl">Practical advice.</span> \(\mathcal{SDP}\) carries one KKT system per member and per scenario, plus binaries for the complementarities and the chance constraint. Stay within the scenario sizes of the file, and keep the out-of-sample set small while developing, tuning and validating the models.</p>
+</div>
+<h3>Expected insights (examples)</h3>
+<p>How the in-sample costs of the formulations are ordered, and why. How different models protect againsts different types of risks (tail risk of achieving high costs/low profits, probability vs magnitude of constraint violations) and what matters depending on the type of constraints, penalty costs and shape of the uncertain quantities. What the scenario approximation of the chance constraint and/or CVaR guarantees in-sample and does not guarantee out-of-sample, as a function of \(N\) and \(\varepsilon\), and hence why the realized constraint violation frequency/magnitude may differ from the target. What protecting against constraint violations or hedging against tail risks costs and whom it protects. The value of modelling the uncertainty at all, against the deterministic baseline: how it moves with \(N\), with how uncertain the members are (\(\kappa\), bounds) and with the penalty level; what changes when the uncertainty sits in an objective coefficient (\(c^L\)) instead of a constraint parameter (the profile); why linear costs make the realized import jump between scenarios. The tractability of replicating every member's KKT system \(N\) times.</p>
+<h3>Suggested steps</h3>
+<ol>
+<li>Evaluate how different draws of the uncertain quantity impact the member's response at the posted prices of Question 2 (deterministic baseline model \(\mathcal{DP}\)), and in turn, how this impacts the objective and constraint satisfaction of the community manager, before embedding this uncertainty in the stochastic models.</li>
+<li>Restate \(\mathcal{DP}\) with scenario-indexed lower levels (the uncertain profile enters the members' primal feasibility, through the reference and the daily minimum). Implement the base stochastic model as one class parametrized by scenario set, representation of objective and constraint satisfaction.</li>
+<li>Formulate variations of the stochastic model - with varying formulations of the objective and constraints satisfaction. Validate the base stochastic model and each variation in the base case study. Predict the ordering of the in-sample costs over these models, before observing it.</li>
+<li>Choose relevant metrics, design numerical experiments and sensitivity studies to answer the questions above, hypothesize about the impact of the sensitivity studies and expected insights before observing their results.</li>
+<li>Conclude across the different numerical experiments, and give the manager a recommendation over the suitability of different stochastic models conditional on the penalty level and the level of uncertainty on its members.&nbsp;</li>
+</ol>
+<h2 id="data">Input data and numerical experiments</h2>
+<p>All questions run on the same case: one energy community, one day, one contract, loaded once in Question 1. This section describes what is provided, how the base case is built, how the scenarios of Question 3 are generated, and how sensitivity analyses are built on the base case. The field-by-field description of every file and the code conventions are in the <code>README.md</code> of the starter package.</p>
+<h3>Data provided</h3>
+<p>The starter package (<code>README.md</code>, <code>data/</code>, <code>src/</code>, <code>main.py</code>; Table 7) follows the structure and data conventions of the Assignment 1 repository: one shared appliance catalogue, one case file per community, units in the field names, 24 hourly values per time series. No model code is provided; your Assignment 1 code (model class, scenario helpers, plotting) is the starting point. The restricted Gurobi licence shipped with gurobipy is too small for Questions 2 and 3: activate the free academic licence (Assignment 1 README) before you start.</p>
+<table>
+<thead>
+<tr>
+<th style="width: 34%;">File</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data/appliance_params.json</code></td>
+<td>Appliance catalogue (Assignment 1 format): the four flexible loads <code>FL_L1</code>–<code>FL_L4</code> (linear disutility 0.25, 0.5, 1.0, 2.0 DKK/kWh; maximum hourly deviation 1 kWh), the PV system <code>PV_01_S</code> (3 kW) and the battery <code>BAT_01_S</code> (2 kWh); day-1 profiles.</td>
+</tr>
+<tr>
+<td><code>data/bus_params.json</code></td>
+<td>Connection point, unchanged from Assignment 1: day-1 day-ahead prices, grid tariffs \(\tau^{imp}=0.5\), \(\tau^{exp}=0.4\) DKK/kWh.</td>
+</tr>
+<tr>
+<td><code>data/weekly_profiles.json</code></td>
+<td>Seven daily profiles <code>d1</code>–<code>d7</code>: day-ahead prices, PV availability ratio, reference load factor. <code>d1</code> and <code>d2</code> are the Assignment 1 days; <code>d1</code> is the base case.</td>
+</tr>
+<tr>
+<td><code>data/params_community_base.json</code></td>
+<td>The base-case community (Assignment 1 case-file format: <code>consumer_id</code>, <code>connection_bus</code>, <code>list_appliances</code>). Only the base community is shipped; variations are built in code (Table 11).</td>
+</tr>
+<tr>
+<td><code>data/dso_contract_params.json</code></td>
+<td>Contract: \(\beta^{DSO}\), \(\alpha^{DSO}\), the cap of every day (constant over the hours), cap rule, reference import without contract per day, individual contracts (split rule, shares \(\kappa_i\), individual caps, alternative split rules).</td>
+</tr>
+<tr>
+<td><code>data/preference_uncertainty_params.json</code></td>
+<td>Uncertainty rules of Question 3: distributions, merging of the members' draws, scenario sizes.</td>
+</tr>
+<tr>
+<td><code>src/data_loader.py</code>, <code>main.py</code></td>
+<td><code>load_community(community, day)</code> returns the members as Assignment 1 <code>InputData</code> objects plus the contract; <code>python main.py</code> prints the base case.</td>
+</tr>
+<tr>
+<td><code>src/scenario_generation.py</code></td>
+<td>Implements the uncertainty file: independent profile scenarios per member, merged into joint scenarios of the community (Question 3).</td>
+</tr>
+</tbody>
+</table>
+<p class="caption">Table 7: Files of the starter package.</p>
+<h3>Base case</h3>
+<h4>Consumers</h4>
+<p>Every consumer is one Assignment 1 consumer composed from the catalogue: one load model and an asset mix.</p>
+<p><em>The load</em> has the structure of the Assignment 1 load <code>FL_03</code>, with the same parameters for all consumers except the slope of the disutility. The preferred hourly profile is \(\ell^{ref}_{i,t}=L^{\max}\,\rho_t\), where \(\rho_t\in[0,1]\) is the day's <code>reference_load_capacity_factor</code> and \(L^{\max}=3\) kWh/h the connection capacity (16.2 kWh over the day on <code>d1</code>). <strong>On top of the characteristics already defined in Assignment 1, we consider that the load may deviate from its reference by at most \(\Delta=1\) kWh in any hour: the hourly bounds are \(\max(0,\ell^{ref}_{i,t}-\Delta)\le\ell_{i,t}\le\min(L^{\max},\ell^{ref}_{i,t}+\Delta)\)</strong> (<code>max_hourly_deviation_kWh</code>; the loader returns them as <code>load_lower_kWh</code> and <code>load_upper_kWh</code>). The minimum daily energy <strong>equals the daily reference energy</strong>, \(E^{\min}=\sum_t\ell^{ref}_{i,t}\) (16.2 kWh on <code>d1</code>); the loader sets it from the profile of the loaded day (<code>min_total_energy_rule</code>). A <strong>linear disutility</strong> \(c^L_i\sum_t|\ell_{i,t}-\ell^{ref}_{i,t}|\) penalizes deviations from the preferred profile. Four slopes occur, and every consumer has one of them (Table 8). The daily minimum fixes how much a consumer uses over the day, and the slope fixes when: a consumer keeps its reference in an hour as long as the price differs from its internal value of a kWh of daily need (the multiplier of the daily minimum) by less than \(c^L_i\), and otherwise moves the hour's load to a bound. A consumer answers prices and the cap by shifting, not by consuming less; the hourly deviation limit makes the flexibility of a class finite in every hour, so that the stiffer classes are called in the most congested hours only. Every member's problem is a linear program; at a price exactly \(c^L_i\) away from its internal value a consumer is indifferent between several schedules.</p>
+<table class="pts" style="width: 100%;">
+<thead>
+<tr>
+<th style="text-align: left;">Load</th>
+<th style="text-align: left;">Slope \(c^L\) (DKK/kWh)</th>
+<th style="text-align: left;">Behaviour against the day's price spread (0.85–2.50 DKK/kWh)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>FL_L1</code></td>
+<td style="text-align: left;">0.25</td>
+<td style="text-align: left;">Shifts on the day-ahead prices alone: moving 1 kWh out of an hour costs 0.25 DKK.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>FL_L2</code></td>
+<td style="text-align: left;">0.5</td>
+<td style="text-align: left;">Shifts on the larger price differences of the day.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>FL_L3</code></td>
+<td style="text-align: left;">1.0</td>
+<td style="text-align: left;">Shifts only when the cap rent adds to the price difference.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>FL_L4</code></td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: left;">Keeps its profile and pays; its congestion is absorbed by the others.</td>
+</tr>
+</tbody>
+</table>
+<p class="caption">Table 8: The four loads. Same reference profile (\(L^{\max}\) × the day's <code>reference_load_capacity_factor</code>), same maximum hourly deviation (1 kWh, within 0–3 kWh/h), same daily minimum (the daily reference energy); only the slope of the linear disutility differs.</p>
+<p><em>The assets</em> are a PV system (<code>PV_01_S</code>: \(\overline{PV}=3\) kW with the day's availability profile, 13.5 kWh on <code>d1</code>, marginal cost \(c^{PV}=1.41\) DKK/kWh) and a battery (<code>BAT_01_S</code>: \(\overline S=2\) kWh, \(\overline P^{ch}=\overline P^{dis}=0.75\) kW, \(\eta^{ch}=\eta^{dis}=0.95\), initial state of charge 50%; the end-of-day state of charge is your modelling choice, as in Assignment 1). Each asset is present or absent, which gives four asset classes: no asset, PV, battery, PV and battery.</p>
+<p><em>The community</em> (<code>params_community_base.json</code>, day <code>d1</code>) has sixteen small consumers behind one connection point, one per combination of a slope and an asset class (Table 9): 48 kW of connected load, 24 kW of PV (8 systems), 8 batteries. The consumer IDs carry the slope index and the assets: <code>C3_PV</code> is the <code>FL_L3</code> load with a PV system and no battery. The eight consumers without PV import their whole daily energy (16.2 kWh on <code>d1</code>) and make the exchange inside the community non-trivial; the low-slope loads and the batteries provide the community's flexibility. The horizon is one day of 24 hours.</p>
+<table class="pts" style="width: 100%;">
+<thead>
+<tr>
+<th style="text-align: left;">Load (slope)</th>
+<th style="text-align: left;">No asset</th>
+<th style="text-align: left;">PV</th>
+<th style="text-align: left;">Battery</th>
+<th style="text-align: left;">PV and battery</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>FL_L1</code> (0.25)</td>
+<td style="text-align: left;"><code>C1</code></td>
+<td style="text-align: left;"><code>C1_PV</code></td>
+<td style="text-align: left;"><code>C1_B</code></td>
+<td style="text-align: left;"><code>C1_PVB</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>FL_L2</code> (0.5)</td>
+<td style="text-align: left;"><code>C2</code></td>
+<td style="text-align: left;"><code>C2_PV</code></td>
+<td style="text-align: left;"><code>C2_B</code></td>
+<td style="text-align: left;"><code>C2_PVB</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>FL_L3</code> (1.0)</td>
+<td style="text-align: left;"><code>C3</code></td>
+<td style="text-align: left;"><code>C3_PV</code></td>
+<td style="text-align: left;"><code>C3_B</code></td>
+<td style="text-align: left;"><code>C3_PVB</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>FL_L4</code> (2.0)</td>
+<td style="text-align: left;"><code>C4</code></td>
+<td style="text-align: left;"><code>C4_PV</code></td>
+<td style="text-align: left;"><code>C4_B</code></td>
+<td style="text-align: left;"><code>C4_PVB</code></td>
+</tr>
+</tbody>
+</table>
+<p class="caption">Table 9: The base-case community: 16 consumers, one per slope and asset class (the loader's <code>archetype</code>, e.g. <code>L3+PV</code>).</p>
+<h4>Contract terms</h4>
+<p><em>Parameters</em> (<code>dso_contract_params.json</code>): discount \(\beta^{DSO}=0.75\), penalty \(\alpha^{DSO}=10\) DKK/kWh, no export cap.</p>
+<p><em>The cap.</em> The cap is constant over the day, like a feeder capacity: \(\bar P^{DSO}_t=f\,E^{R}/24\), where \(E^{R}\) is the aggregated daily import without contract on that day and \(f=1.3\). \(E^{R}\) is given per day in the file, with the peak, the cost and the exceedance without contract, so that you can check your reference model. The cap's daily energy is thus 1.3 times the import without contract: the contract moves the import away from the peak hours; it does not ask the consumers to consume less. The cap of every day is provided (<code>capacity_limits_by_day_kW</code>; <code>capacity_limit_kW</code> is <code>d1</code>, 9.4 kW). To vary the cap's tightness, scale the constant. On <code>d1</code> the import without contract exceeds the cap in 9 hours, and the cap binds the community in 18 of the 24 hours.</p>
+<p><em>Individual caps</em> (contract (a)). Consumer \(i\) receives \(\bar P^{DSO}_{i,t}=\kappa_i\bar P^{DSO}_t\), with \(\kappa_i\) proportional to its net energy imported over the day without contract (\(\sum_i\kappa_i=1\); about 0.02 for a PV owner, 0.10 for a consumer without PV). The shares and the individual caps of <code>d1</code> are in the file (<code>individual_contracts</code>), with the shares of every other day. Alternative split rules are described there in words.</p>
+<h3>Numerical experiments</h3>
+<div class="box tip">
+<p><span class="lbl">Practical advice.</span> Validate before you analyse. The limit cases of Table 12, the equivalence of \(\mathcal{DP}\) with the duals of \(\mathcal C\) in Question 2 and the out-of-sample evaluation of Question 3 are not optional: results that fail them are not results.</p>
+</div>
+<h4>Scenario generation (Question 3)</h4>
+<p>The uncertainty file fixes the <em>rules</em>; <code>src/scenario_generation.py</code> implements them and is meant to be used as is (extend it if needed, and report every seed). You pick a few hyper-parameters that set <em>how uncertain</em> each quantity is and <em>how many scenarios</em> to draw. The code draws the scenarios, combines them, and returns them with explicit indices, so that every scenario can be traced back to the draws it is made of. The generated scenarios are part of the code deliverable. The formulas are in the README; this subsection states what you pick and what you get.</p>
+<p><strong>Question 3 — uncertain preferences</strong> (<code>preference_uncertainty_params.json</code>, Table 10, Figure 4). The reference profile of every member is uncertain through one scaling parameter \(\theta\): \(\rho_t^{\theta}\), one exponent per member for all hours, which keeps the profile in \([0,1]\) without clipping (\(\theta&lt;1\) raises it, \(\theta&gt;1\) lowers it). The daily minimum and the hourly bounds follow deterministically: in every scenario the daily minimum equals the member's daily reference energy, \(L^{\max}\sum_t\rho_t^{\theta}\), and the bounds are \(\ell^{ref}\pm\Delta\) around the scenario's reference. The disutility slope (\(c^L\theta\)) is available as a second quantity for variations; it is not uncertain in the base study (<code>n_scenarios = 1</code>). Draws are <strong>independent per member</strong> (and per quantity), each on its own random stream, and are merged into joint scenarios of the community: joint scenario \(s\) takes draw \(s\) of every uncertain pair.</p>
+<table>
+<thead>
+<tr>
+<th style="width: 24%;">You pick (per quantity, optionally per member)</th>
+<th>Meaning</th>
+<th style="width: 30%;">Base value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>n_scenarios</code></td>
+<td>number of independent scenarios of \(\theta\) drawn for the pair; <strong>1 = not uncertain</strong> (single scenario \(\theta=1\) for every member)</td>
+<td>5 for the profile; 1 for \(c^L\)</td>
+</tr>
+<tr>
+<td><code>lo</code>, <code>hi</code></td>
+<td>hard bounds of \(\theta\), never violated (no clipping)</td>
+<td>profile: [0.8, 1.2]; \(c^L\): [0.6, 1.4]</td>
+</tr>
+<tr>
+<td><code>mean</code></td>
+<td>centre of the scenarios; 1 = the base case; another value shifts them (e.g. members believed to consume more than declared)</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>kappa</code></td>
+<td>concentration of the scaled Beta distribution: \(\kappa=2\) with a centred mean is uniform between the bounds; larger \(\kappa\) concentrates the draws around the mean; \(\kappa\to\infty\) is deterministic</td>
+<td>2 (uniform)</td>
+</tr>
+<tr>
+<td>in-sample sizes, out-of-sample size, seeds</td>
+<td>number of joint scenarios the prices are optimized on; the common set they are evaluated on</td>
+<td>5 and 10; 100 out of sample; seeds reported</td>
+</tr>
+</tbody>
+</table>
+<p class="caption">Table 10: Question 3 scenario generation: hyper-parameters, meaning and base values.</p>
+<p><em>The code returns</em> (<code>draw_preference_scenarios</code>, or step by step <code>rules_to_spec</code> → <code>set_rule</code> → <code>draw_scaling_scenarios</code> → <code>merge_scenarios</code>): the independent scenarios of \(\theta\) per member; a list of joint scenarios, each with its probability, the <strong>index</strong> of the draw taken for every member, the \(\theta\) values used, and every member's appliance parameters as the scenario sees them (profile and daily minimum), ready to be loaded into your member model. <code>expected_preference_scenario</code> is the deterministic baseline (\(\theta=1\) everywhere, the mean of every distribution in the base study).</p>
+<figure style="margin: 8px 0 4px; text-align: center;"><img src="pic3_20261020161214403.png" alt="Question 3 scenario generation" style="max-width: 100%; height: auto;">
+<p class="caption">Figure 4: Question 3. Independent draws of the profile scaling parameter per member (three draws each), merged into joint scenarios that record the draw taken for every member; the daily minimum follows the profile.</p>
+</figure>
+<h4>Sensitivity analyses</h4>
+<p>Every analysis is a variation of the base case. A variation is built <em>in code</em> from the loaded objects; the data files are never edited, so that every base-case result is on the data as provided and comparable across groups. Table 11 lists the dimensions along which the base case can be varied, what to change in the code, what it changes, and the rules that keep a variation consistent. Unless a question asks for a specific study, you choose the dimensions relevant to your argument and justify the choice. Every variation of the data and the contract is feasible for the community under direct control; feasibility under the requirements of Questions 2 and 3 is part of what those questions ask.</p>
+<p><strong>Choosing the values.</strong> Pick the range so that both regimes appear: the cap binding and slack, a requirement feasible and infeasible, the contract worth signing and not. Pick the granularity so that the trend and its breaking point are visible: a coarse sweep first, then refine around the value where the behaviour changes. Present only the values that carry the argument.</p>
+<div class="box tip">
+<p><span class="lbl">Practical advice.</span> State a hypothesis and formulate the expected insights before running each analysis: which dimension, over which range, should produce which effect, visible in which metric, and the cause. An effect that does not appear, or appears with the wrong sign, is a result too. Change one dimension at a time, unless the interaction is the point (two dimensions read as a map, or two model variations compared on the same data). Not every experiment you run belongs in the report: keep the studies that test a hypothesis and change a conclusion, drop those that only confirm the base case or repeat another study's message.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th style="width: 11%;">Dimension</th>
+<th style="width: 36%;">What you can tune in the code</th>
+<th style="width: 23%;">What it changes</th>
+<th>Rules</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>a) Member mix</strong></td>
+<td>After <code>load_community("base")</code>, edit <code>com.members</code>: drop or duplicate <code>InputData</code> objects (new <code>consumer_id</code> for a copy); change the load slope <code>linear_disutility</code> (0.25 to 2.0); remove a PV system (<code>pv_max_kW = 0</code>, <code>pv_available</code> zero) or a battery (<code>battery_*</code> = <code>None</code>), or add them with the catalogue values. Alternatively, write your own <code>params_community_&lt;name&gt;.json</code> in the Assignment 1 format and load it by name.</td>
+<td>The community's flexibility, its reference import \(E^R\) and congestion, the exchange behind the meter; the number of members sets the model size.</td>
+<td>One connection point. Recompute \(E^R\), the cap (\(f\times E^R\), same profile shape) and the shares \(\kappa_i\) from your own \(\mathcal R\) for the new mix (the loader's capacity-rule shares are a placeholder). Name the mix and state what changed. Not required by any question.</td>
+</tr>
+<tr>
+<td><strong>b) Daily conditions</strong></td>
+<td><code>load_community("base", day="d3")</code>, <code>d1</code>–<code>d7</code>.</td>
+<td>Prices, PV availability, reference profiles and daily minimum, and the cap of that day, all together.</td>
+<td>Never combine the prices of one day with the PV or the cap of another. <code>d1</code> and <code>d2</code> are the Assignment 1 days.</td>
+</tr>
+<tr>
+<td><strong>c) Contract</strong></td>
+<td><code>com.contract.tariff_discount_ratio</code> (\(\beta^{DSO}\)), <code>.penalty_DKK_per_kWh</code> (\(\alpha^{DSO}\)), <code>.export_capacity_limit_kW</code>. Cap tightness: multiply <code>.capacity_limit_kW</code> by \(f'/1.3\); a time-varying cap profile is a variation of your own (e.g. the inverse-price shape of [1]). Split rule of (a): recompute <code>.share</code> from your \(\mathcal R\) with another rule of the contract file (peak, gross energy, hourly, capacity) and <code>.individual_capacity_limit_kW</code> \(=\kappa_i\times\) cap.</td>
+<td>The value of the contract to each side; which hours bind and how high the rent rises; the benchmark \(\mathcal I\), hence individual rationality.</td>
+<td>\(\sum_i\kappa_i=1\). Compare \(\mathcal I\) and \(\mathcal C\) under the same contract. Name the benchmark by its split rule (\(\mathcal I^{peak}\)).</td>
+</tr>
+<tr>
+<td><strong>d) Members' parameters</strong></td>
+<td>On each <code>InputData</code>: <code>linear_disutility</code> (one factor for all members keeps the ordering of the slopes); <code>max_hourly_deviation_kWh</code> (recompute <code>load_lower_kWh</code> / <code>load_upper_kWh</code>); <code>min_daily_energy_kWh</code> as a ratio of <code>reference_load.sum()</code>; <code>pv_max_kW</code> (rescale <code>pv_available</code>); <code>battery_capacity_kWh</code> (scale the charge and discharge power with it).</td>
+<td>How much flexibility the community has, and what fixes the daily energy.</td>
+<td>Keep <code>reference_load</code> \(\le\) <code>load_max_kWh</code> and the bounds consistent with the deviation limit. A daily minimum above the reference energy forces consumption beyond the preferred profile: say so if intended. Change the same parameter for all members, unless heterogeneity is the point.</td>
+</tr>
+<tr>
+<td><strong>e) Model variations</strong></td>
+<td>Switches of your model class: battery end-of-day; cap as hard constraint or penalty. Question 2: objective, requirements (none, budget balance, both), hard or soft, price bound and regularization. Question 3: cap in expectation, chance constraint (\(\varepsilon\)) or every scenario; requirements per scenario or in expectation; risk measure.</td>
+<td>The problem class and its solution, not the data.</td>
+<td>One switch at a time, on the same data. Name the variant with a superscript.</td>
+</tr>
+<tr>
+<td><strong>f) Uncertainty, Question 3</strong></td>
+<td><code>set_rule(spec, quantity, consumer_id, n_scenarios, lo, hi, mean, kappa)</code> for <code>"profile"</code> (the base study) or <code>"cL"</code> (uncertain disutility slope instead, or as well); in-sample \(N\), out-of-sample size, seeds.</td>
+<td>Which members and which quantity are uncertain, how much, and how many scenarios the prices are optimized on.</td>
+<td>Same out-of-sample set and common random numbers across the models compared. Seeds reported.</td>
+</tr>
+</tbody>
+</table>
+<p class="caption">Table 11: Variations of the base case: what to change, what it changes, and the rules that keep a variation consistent.</p>
+<h4>Metrics</h4>
+<p>Table 12 lists metrics and types of analysis relevant to the questions. They are examples, not an exhaustive list, and not all expected in one report. Define every metric you use precisely (units, reference situation, sign convention) and keep the definition in every question. Which ones you report is your choice, unless a question states a minimum. Choose the few that carry your argument, show them in figures that relate cause and effect (a metric against the parameter swept; two metrics against each other as a trade-off frontier), and leave the rest to the appendix or the repository.</p>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th>Metrics and analyses</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Value and cost</td>
+<td>Total community cost (or welfare) and its components: energy at the day-ahead price, tariffs, penalty, members' utility and disutility; expected value, quantiles and CVaR under uncertainty; value against the no-contract and individual-contract situations (what the contract costs, what pooling is worth); value of the stochastic solution; expected value of perfect information (EVPI).</td>
+</tr>
+<tr>
+<td>Who gains</td>
+<td>Individual benefit against the benchmark (absolute; as a share of the benchmark cost; relative to the member's contribution to the effort); individual rationality against the no-contract and individual-contract situations; the manager's budget (payments collected minus costs incurred) and its composition (congestion rent, tariffs); fairness of the distribution (dispersion of benefits, proportional cost reduction, benefit per kWh of flexibility provided).</td>
+</tr>
+<tr>
+<td>Flexibility for the DSO</td>
+<td>Import removed from the capped hours and energy shifted across hours; residual cap exceedance and penalty paid; peak import; cost of the flexibility to the community per kWh removed (in total, and counting only the kWh above the cap); the contracts (discount × cap) under which both sides gain.</td>
+</tr>
+<tr>
+<td>Dispatch and behaviour</td>
+<td>Per member and in aggregate: energy shifted (deviation from the reference profile, by hour and over the day), hours at the bounds, when the daily minimum is filled; battery throughput and cycles, charging in the capped hours; PV self-consumed, exchanged inside the community, exported or curtailed; energy exchanged behind the meter against energy imported through it; import and export profiles at the connection point against the cap.</td>
+</tr>
+<tr>
+<td>Thresholds and marginal values</td>
+<td>Shadow prices: the cap multiplier (value of one more kW of cap in an hour), the multipliers of the daily minimum and of the battery limits; break-even values found by sweeping (the discount at which the contract pays, the cap energy at which the requirements of Q2 become feasible, the flexibility at which individual contracts beat the community); slope of the cost against the parameter around the base case.</td>
+</tr>
+<tr>
+<td>Prices and signals</td>
+<td>Internal prices, cap multipliers and effective marginal prices of the members (Q1); posted prices, their volatility across hours and their relation to the internal prices (Q2); in which hours the price is pinned to the discounted import or export price and in which the cap sets it, and why.</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Limit cases: the community under direct control with no cap, no discount and tariffs on each member's own flows reproduces the no-contract situation; with every quantity at one scenario the stochastic models reproduce the deterministic one. Scenario checks: the drawn \(\theta\) stay inside their bounds and average to the set mean; every scenario's daily minimum equals its reference energy; the indices recover the draws. The equivalence of \(\mathcal{DP}\) with the duals of \(\mathcal C\) (Q2) and the member-hours where members are indifferent; complementarity and strong-duality residuals; magnitude and frequency of constraint violations in and out of sample.</td>
+</tr>
+<tr>
+<td>Under uncertainty</td>
+<td>In-sample objective against out-of-sample realized cost (optimism gap); frequency and magnitude of cap exceedance against the target \(\varepsilon\); in-sample vs out-of-sample stability as the number of scenarios grows; distribution of the realized cost (quantiles, CVaR, worst path), not only its mean; value of the stochastic solution, EVPI; how the results move with the scenario hyper-parameters (\(\kappa\) and bounds); which draws drive the tail of the realized cost (trace the worst scenarios back to their indices: a member whose profile is higher than declared).</td>
+</tr>
+<tr>
+<td>Computation</td>
+<td>Problem class and size (variables, binaries, constraints, as functions of members and joint scenarios); solution time and optimality gap; solution time against the saving more scenarios buy.</td>
+</tr>
+</tbody>
+</table>
+<p class="caption">Table 12: Suggested metrics and analyses. Define what you use; report what carries the argument.</p>
+<h4>Figures and tables</h4>
+<p>A figure or a table is an argument, not a record of output. Each one answers one question of the form "what happens to <em>Y</em> when <em>X</em> changes, and why". Its design follows from that question: what is on the axes, what is compared, where the eye should land first. A value out of context (a cost of 718 DKK, a price of 2.3 DKK/kWh) is not an insight. A value <em>against a reference</em> (the no-contract situation, the individual contracts, the central dispatch, the day-ahead price, the cap) and <em>along a parameter</em> (discount, cap tightness, number of scenarios) is. Table 12 gives the <em>Y</em>, Table 11 the <em>X</em>; the reference turns both into a trend. Table 13 lists the types of figures and tables that fit this assignment.</p>
+<table>
+<thead>
+<tr>
+<th style="width: 22%;">Type</th>
+<th>Use it when</th>
+<th style="width: 34%;">Typical use here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Line plot over time (hours)</td>
+<td>The shape of a daily profile is the point: when something happens, how two profiles differ hour by hour. Plot the reference profile on the same axes (dashed or grey), so that the deviation is read directly; shade the hours where a constraint binds.</td>
+<td>Aggregated import against the cap, with and without contract; internal price against the day-ahead price and the discounted import/export prices; a member's load against its reference; state of charge over the day.</td>
+</tr>
+<tr>
+<td>Line plot over a parameter</td>
+<td>A sweep: one metric against the parameter varied, one line per model or variant. The crossings and kinks are the result (where a contract starts to pay, where a requirement becomes infeasible, where the cap stops binding): mark them. Prefer two panels sharing the <em>x</em>-axis to two <em>y</em>-axes.</td>
+<td>Community cost and DSO exceedance against the discount or the cap energy, for \(\mathcal R\), \(\mathcal I\), \(\mathcal C\); in-sample vs out-of-sample cost against the number of scenarios.</td>
+</tr>
+<tr>
+<td>Grouped or stacked bars</td>
+<td>A comparison across a few categories (members, models, days) of a quantity that decomposes: stacked when the parts sum to a meaningful total (cost = energy + tariffs + penalty + disutility), grouped when the categories are compared on the same scale. Order the categories by a meaningful key (archetype, size of the gain), not alphabetically. More than ~8 categories or ~4 parts calls for another chart.</td>
+<td>Benefit per member against \(\mathcal I\) and against \(\mathcal R\), grouped by archetype; decomposition of the community's cost under each model; cost of each requirement of Question 2 (cap only → budget balance → both).</td>
+</tr>
+<tr>
+<td>Heat map</td>
+<td>Two dimensions at once, and the pattern matters more than individual values: a quantity indexed by (member, hour), or a metric over a grid of two parameters. Use a diverging colour scale centred on the reference when the sign matters (deviation from the reference profile, price minus day-ahead price), a sequential one otherwise. Annotate the cells only if there are few.</td>
+<td>Shifted energy per member and hour; price differences per member and hour (Question 2 or its variants); the community's gain, or the feasibility of the requirements, over a grid of discount × cap energy.</td>
+</tr>
+<tr>
+<td>Distribution plots (histogram, box plot, empirical CDF)</td>
+<td>The variability is the point, not the mean: outcomes over scenarios or out-of-sample paths. Put the compared policies on the same axes, with common random numbers, so that the shift of the whole distribution is visible. Mark the mean, a quantile and the CVaR if the argument uses them.</td>
+<td>Realized cost of the deterministic baseline and of the stochastic models on the out-of-sample set; cap exceedance across scenarios against the target \(\varepsilon\); in-sample vs out-of-sample cost.</td>
+</tr>
+<tr>
+<td>Trade-off frontier (scatter or curve)</td>
+<td>Two metrics pull in opposite directions and the question is the exchange rate between them: one point per model or per parameter value, the parameter annotated along the curve. The slope of the frontier is the insight.</td>
+<td>Community cost against cap exceedance as \(\varepsilon\) or \(\alpha^{DSO}\) varies; community cost against the equality of the distribution; computation time against the saving more scenarios buy.</td>
+</tr>
+<tr>
+<td>Table</td>
+<td>Exact values matter, or there are few numbers and several dimensions to show at once (models × metrics on the base case). Order rows and columns so that the comparison made in the text is read along a row or down a column; typeset the key cells in bold; give units in the header, a reference column, and differences or ratios rather than only levels. A table of twenty runs with six decimals carries no insight.</td>
+<td>Base-case summary of \(\mathcal R\), \(\mathcal I\), \(\mathcal C\) (cost, exceedance, peak, rent, members worse off); decomposition of a requirement's cost; problem size and solution time per model.</td>
+</tr>
+</tbody>
+</table>
+<p class="caption">Table 13: Types of figures and tables, when to use them, and what they can show here.</p>
+<div class="box tip">
+<p><span class="lbl">Practical advice.</span> A figure belongs in the main text if, and only if, an argument needs it. Three rules: (1) <em>What shares the axes is a claim.</em> Put together what the argument contrasts (the same metric under two models, the same model before and after a requirement, the same community on two days) and nothing else; a line that is not part of the comparison is noise. (2) <em>Show the trend, then the detail.</em> Lead with the effect along the parameter or against the reference; the hourly profile that explains why comes second, for the one case that illustrates the mechanism. (3) <em>Make the figure answer its question without the text.</em> Title or caption states the question and the answer ("the community gains below a discount of 0.4; the individual contracts never do"); axes carry units; the reference line is labelled; colours and line styles are the same for the same model in every figure; the legend uses the superscripts of your nomenclature. If an insight seems to need many figures, either redesign them so that one shows exactly what the insight says, or split the insight into several, each with its own figure. If a reader cannot say what a figure shows in one sentence, it is either two figures or no figure.</p>
+</div>
+<h2>References</h2>
+<ol class="refs">
+<li>B. Crowley, J. Kazempour, L. Mitridati, "How can energy communities provide grid services? A dynamic pricing mechanism with budget balance, individual rationality, and fair allocation," <em>Applied Energy</em>, vol. 382, 125154, 2025 (open access). — The reference design of the mechanism of Question 2 and the inspiration of the contract.</li>
+<li>S. A. Gabriel, A. J. Conejo, J. D. Fuller, B. F. Hobbs, C. Ruiz, <em>Complementarity Modeling in Energy Markets</em>, Springer, 2013. — Bilevel problems, MPEC reformulations, strong-duality linearization.</li>
+<li>J. Fortuny-Amat, B. McCarl, "A representation and economic interpretation of a two-level programming problem," <em>Journal of the Operational Research Society</em>, vol. 32, no. 9, pp. 783–792, 1981; and S. Siddiqui, S. A. Gabriel, "An SOS1-based approach for solving MPECs with a natural gas market application," <em>Networks and Spatial Economics</em>, vol. 13, pp. 205–227, 2013. — Big-M and SOS1 treatments of complementarity.</li>
+<li>A. J. Conejo, M. Carrión, J. M. Morales, <em>Decision Making Under Uncertainty in Electricity Markets</em>, Springer, 2010; and J. R. Birge, F. Louveaux, <em>Introduction to Stochastic Programming</em>, 2nd ed., Springer, 2011. — Scenario-based stochastic programming, value of the stochastic solution.</li>
+<li>R. T. Rockafellar, S. Uryasev, "Optimization of conditional value-at-risk," <em>Journal of Risk</em>, vol. 2, no. 3, pp. 21–41, 2000. — The linear reformulation of CVaR.</li>
+<li>J. Luedtke, S. Ahmed, "A sample approximation approach for optimization with probabilistic constraints," <em>SIAM Journal on Optimization</em>, vol. 19, no. 2, pp. 674–699, 2008. — Scenario approximation of chance constraints and its guarantees.</li>
+<li>M. Kaut, S. W. Wallace, "Evaluation of scenario-generation methods for stochastic programming," <em>Pacific Journal of Optimization</em>, vol. 3, no. 2, pp. 257–271, 2007. — In-sample and out-of-sample stability.</li>
+</ol>
+</div></body></html>

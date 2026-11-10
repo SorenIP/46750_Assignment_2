@@ -21,6 +21,8 @@ from src.experiments_I import limit_case_check, run_I
 from src.experiments_sweep import run_sweep
 from src.community_model import CONFIGS, compare, member_table, run as run_models
 from src.check_unified import check_unified
+from src.dynamic_pricing import run_dp_base
+from src.dp_variants import run_dp_variants
 
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
 
@@ -33,6 +35,8 @@ def main() -> None:
     ap.add_argument("--R", action="store_true", help="solve model R (no contract) and save results/<community>/R/")
     ap.add_argument("--I", action="store_true", help="solve model I (individual contracts) and compare with R, save results/<community>/I/")
     ap.add_argument("--C", action="store_true", help="solve model C (community contract), compare with R and I, save results/<community>/C/")
+    ap.add_argument("--DP-base", action="store_true", help="test Question 2 posted-price responses at model C's internal prices")
+    ap.add_argument("--DP-variants", action="store_true", help="solve Question 2 price variants: cap-only, budget balance, IR, and relaxed IR")
     ap.add_argument("--sweep", action="store_true", help="sensitivity study (discount, cap scale, penalty) for R, I and C, save results/<community>/sweep/")
     ap.add_argument("--models", nargs="+", metavar="NAME", help=f"unified model (src/community_model.py): solve these named configurations and compare them, e.g. --models R I C; available: {list(CONFIGS)}")
     ap.add_argument("--check-unified", action="store_true", help="regression test: the unified model reproduces the separate R, I and C modules")
@@ -75,6 +79,23 @@ def main() -> None:
         print(r["summary"].round(2).to_string())
         print({k: round(v, 2) for k, v in r["manager"].items()})
         print(r["members"][["archetype", "cost_R_DKK", "cost_I_DKK", "cost_C_DKK", "benefit_vs_R_DKK", "benefit_vs_I_DKK"]].round(2).to_string())
+    if args.DP_base:
+        r = run_dp_base(com, RESULTS_DIR / args.community / "DP_base")
+        print("Question 2 base check: C internal prices posted to independent members")
+        print({k: float(f"{v:.6g}") for k, v in r["checks"].items()})
+        print(f"Indifferent member-hours: {len(r['indifferent_hours'])}")
+        if not r["indifferent_hours"].empty:
+            print(r["indifferent_hours"][["consumer_id", "hour", "posted_price_DKK_per_kWh",
+                                          "daily_energy_value_DKK_per_kWh", "slope_DKK_per_kWh",
+                                          "indifferent_direction"]].to_string(index=False))
+    if args.DP_variants:
+        r = run_dp_variants(com, RESULTS_DIR / args.community / "DP_variants")
+        print("Question 2 price-optimization variants:")
+        for name, result in r.items():
+            print(f"{name}: {result['status']}")
+            if result["status"] == "optimal":
+                print({k: float(f"{v:.6g}") if isinstance(v, (float, int)) else v
+                       for k, v in result["metrics"].items()})
     if args.sweep:
         import pandas as pd
         df = run_sweep(com, RESULTS_DIR / args.community / "sweep")

@@ -178,6 +178,50 @@ without touching R, I and C. `python main.py --models R I C` writes `results/<co
 `python main.py --check-unified` compares with the first version: all differences are 0 up to 6e-14.
 R and I are solved member by member (they do not interact), C as one LP; the user does not see the difference.
 
+## Question 2: dynamic-pricing base check
+
+Run `python main.py --DP-base` to solve model C and then let every member independently optimize at C's hourly internal prices
+(\(x_t=\pi_t^{\mathcal C}\)). In each member LP, the payment is \(x_t(q^{imp}_{i,t}-q^{exp}_{i,t})\), plus PV production
+cost and linear load-shifting disutility. The grid tariffs and cap penalty are omitted from the member LP because the manager
+pays them at the community meter. The full DP manager problem minimizes community cost
+\[
+\sum_t \big[p_t(P^{imp}_t-P^{exp}_t)+(1-\beta)(\tau^{imp}P^{imp}_t+\tau^{exp}P^{exp}_t)
++\alpha e_t\big]+\sum_i\big[c^{PV}_i\sum_t g_{i,t}
++c^L_i\sum_t(d^+_{i,t}+d^-_{i,t})\big]
+\]
+subject to the community balance, cap/exceedance constraints, and each member's schedule being an optimizer of its posted-price
+LP. The internal payments are transfers, not an extra social cost. The posted-price LP has the same feasible set as the member
+part of C; only its objective changes from the centralized price-taking cost to the posted-price payment.
+
+This is the supporting-price base-case check in Question 2, not the full bilevel price-optimization MILP or the later budget-balance
+and individual-rationality variants. It checks whether the C dispatch is itself a best response to the posted prices (optimistic
+selection when a member has multiple optima), and separately reports the particular LP solver's response schedule. These schedules
+can differ: the C dispatch is a valid best response for all members, but independently solved LPs may select different points from
+the same optimal response sets and thereby cause a worse manager outcome. With linear disutility, an indifferent hour satisfies
+\(|x_t-\lambda_i|=c_i^L\), where
+\(\lambda_i=-\texttt{dual(min\_energy)}\) is the member's marginal value of its daily energy requirement. The CSVs in
+`results/<community>/DP_base/` contain hourly prices, per-member response checks, indifference hours, and residuals.
+For importing hours, \(\pi_t^{\mathcal C}=p_t+(1-\beta)\tau^{imp}+\mu_t\); for exporting hours,
+\(\pi_t^{\mathcal C}=p_t-(1-\beta)\tau^{exp}\). Here \(\mu_t\) is the cap dual (congestion rent).
+
+### Price optimization, budget balance and individual rationality
+
+Run `python main.py --DP-variants` to solve four uniform-price MILP variants: `cap_only`, `budget_balance`,
+`budget_balance_ir`, and `budget_balance_relaxed_ir`. Each member's best-response LP is embedded using its primal and dual
+feasibility, stationarity, and SOS1 complementarity constraints. This lets the manager choose posted prices and member schedules
+jointly without bilinear price-times-quantity terms; the member schedule is an optimistic selection if its best response is not
+unique. Posted prices are bounded hourly between the external marginal export value
+\(p_t-(1-\beta)\tau^{exp}\) and the external marginal import-plus-penalty cost
+\(p_t+(1-\beta)\tau^{imp}+\alpha\).
+
+The manager minimizes community cost (meter energy, discounted tariffs and cap penalty, plus members' PV and disutility costs).
+`budget_balance` adds equality between all member payments and the external meter bill. `budget_balance_ir` further constrains each
+member's cost (payment + PV + disutility) to be no higher than its cost in R. If that strict combination is infeasible,
+`budget_balance_relaxed_ir` retains budget balance, minimizes total IR shortfall first, and then community cost. The outputs in
+`results/<community>/DP_variants/` report each member's payment, cost and benefit versus R, posted prices, imports, cap exceedance,
+load shifting, and the community-cost/flexibility effects. This choice makes infeasibility and the members responsible visible
+instead of silently dropping a requirement.
+
 ## Outputs of `python main.py --sweep` (in `results/base/sweep/`)
 
 `sweep.csv` (one row per model and parameter value: exceedance, peak, hours above cap, DSO revenue, cost, benefit against R, members better off, rent and losses for C),
