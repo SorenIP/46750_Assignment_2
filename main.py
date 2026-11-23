@@ -36,7 +36,9 @@ def main() -> None:
     ap.add_argument("--I", action="store_true", help="solve model I (individual contracts) and compare with R, save results/<community>/I/")
     ap.add_argument("--C", action="store_true", help="solve model C (community contract), compare with R and I, save results/<community>/C/")
     ap.add_argument("--DP-base", action="store_true", help="test Question 2 posted-price responses at model C's internal prices")
-    ap.add_argument("--DP-variants", action="store_true", help="solve Question 2 price variants: cap-only, budget balance, IR, and relaxed IR")
+    ap.add_argument("--DP-variants", nargs="*", metavar="NAME", help="solve Question 2 price variants one after the other with a live progress line, saving each when done (no time limit); optionally name some: cap_only budget_balance budget_balance_ir budget_balance_relaxed_ir")
+    ap.add_argument("--DP-gap", type=float, default=1e-6, help="relative MIP gap at which a DP variant counts as solved (default 1e-6; e.g. 0.01 stops at 1%%)")
+    ap.add_argument("--DP-plain", action="store_true", help="switch off the DP speed-ups (bounds on multipliers, lower-bound cut from C, price start)")
     ap.add_argument("--sweep", action="store_true", help="sensitivity study (discount, cap scale, penalty) for R, I and C, save results/<community>/sweep/")
     ap.add_argument("--models", nargs="+", metavar="NAME", help=f"unified model (src/community_model.py): solve these named configurations and compare them, e.g. --models R I C; available: {list(CONFIGS)}")
     ap.add_argument("--check-unified", action="store_true", help="regression test: the unified model reproduces the separate R, I and C modules")
@@ -88,12 +90,13 @@ def main() -> None:
             print(r["indifferent_hours"][["consumer_id", "hour", "posted_price_DKK_per_kWh",
                                           "daily_energy_value_DKK_per_kWh", "slope_DKK_per_kWh",
                                           "indifferent_direction"]].to_string(index=False))
-    if args.DP_variants:
-        r = run_dp_variants(com, RESULTS_DIR / args.community / "DP_variants")
+    if args.DP_variants is not None:
+        r = run_dp_variants(com, RESULTS_DIR / args.community / "DP_variants", only=args.DP_variants or None,
+                         mip_gap_target=args.DP_gap, speedups=not args.DP_plain)
         print("Question 2 price-optimization variants:")
         for name, result in r.items():
             print(f"{name}: {result['status']}")
-            if result["status"] == "optimal":
+            if "metrics" in result:
                 print({k: float(f"{v:.6g}") if isinstance(v, (float, int)) else v
                        for k, v in result["metrics"].items()})
     if args.sweep:
