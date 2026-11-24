@@ -21,12 +21,13 @@ from .model import ContractTerms, MemberModel
 class PostedPriceMemberModel(MemberModel):
     """A member LP whose net consumption is charged at an hourly posted price."""
 
-    def __init__(self, data: InputData, posted_price: np.ndarray, verbose: bool = False):
+    def __init__(self, data: InputData, posted_price: np.ndarray, verbose: bool = False,
+                 model: gp.Model | None = None):
         prices = np.asarray(posted_price, dtype=float)
         if prices.shape != (data.n_hours,) or not np.isfinite(prices).all():
             raise ValueError(f"{data.consumer_id}: posted_price must contain {data.n_hours} finite hourly prices")
         self.posted_price = prices
-        super().__init__(data, ContractTerms(), verbose=verbose)
+        super().__init__(data, ContractTerms(), verbose=verbose, model=model)
 
     def _cost_expressions(self) -> dict[str, gp.LinExpr]:
         d, T = self.d, self.T
