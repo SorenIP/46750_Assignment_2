@@ -29,6 +29,14 @@ INK, INK2, GRID, SURFACE = "#0b0b0b", "#52514e", "#e4e3df", "#ffffff"
 
 
 def main() -> None:
+    global MODELS
+    present = [m for m in MODELS if (OUT / f"MD_{m[0]}_on_{SET}.csv").exists()]   # baselines that were evaluated
+    if not present:
+        raise FileNotFoundError(f"no MD_*_on_{SET}.csv in {OUT}: run  python main.py --Q3-baseline  first")
+    skipped = [m[0] for m in MODELS if m not in present]
+    if skipped:
+        print(f"not evaluated yet, left out of the figure: {skipped}")
+    MODELS = present
     data = {v: pd.read_csv(OUT / f"MD_{v}_on_{SET}.csv") for v, _, _ in MODELS}
     expected = {v: pd.read_csv(OUT / f"MD_{v}_validation.csv", index_col=0)["value"] for v, _, _ in MODELS}
 

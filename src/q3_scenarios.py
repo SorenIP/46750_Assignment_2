@@ -71,7 +71,8 @@ def save(name, scen, seed, n, ids):
     json.dump({"name": name, "seed": seed, "n": n, "scenarios": ser}, open(OUT / f"{name}.json", "w"), indent=1)
     pd.DataFrame([[s["theta"]["profile"][c] for c in ids] for s in scen], columns=ids).to_csv(OUT / f"{name}_theta.csv")
 
-if __name__ == "__main__":
+def main() -> pd.DataFrame:
+    """Draw, check and save all scenario sets; returns the check table (one row per set)."""
     OUT.mkdir(parents=True, exist_ok=True)
     app, com, rules = load("d1")
     ids = [m["consumer_id"] for m in com["consumers"]]
@@ -94,3 +95,8 @@ if __name__ == "__main__":
     df.to_csv(OUT / "scenario_checks.csv")
     json.dump({"seeds": SEEDS, "sets": sets, "large_sample_check": big}, open(OUT / "seeds.json", "w"), indent=1, default=float)
     print(df.T.to_string()); print(big)
+    return df
+
+
+if __name__ == "__main__":
+    main()
