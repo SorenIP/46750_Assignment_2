@@ -1,0 +1,14 @@
+,value
+variant,budget_balance
+set,expected (validation)
+status_Q2,optimal
+Q2_community_cost_DKK,372.18406800676644
+tester_community_cost_DKK,372.1842113297887
+Q2_exceedance_kWh,0.0
+tester_exceedance_kWh,1.2434497875801753e-14
+Q2_budget_DKK,1.7337242752546445e-12
+tester_budget_DKK,-0.00013090725116171598
+Q2_IR_shortfall_vs_R_DKK,84.93062780501975
+tester_IR_shortfall_vs_R_DKK,84.93063401291202
+tester_IR_shortfall_vs_Cref_DKK,86.22475471032472
+tester_IR_violations_vs_Cref,8.0

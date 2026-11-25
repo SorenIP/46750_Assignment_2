@@ -1,0 +1,14 @@
+,value
+variant,ind_ir_ref
+set,expected (validation)
+status_Q2,optimal
+Q2_community_cost_DKK,372.1624334736839
+tester_community_cost_DKK,372.16243447368413
+Q2_exceedance_kWh,0.0
+tester_exceedance_kWh,3.552713678800501e-15
+Q2_budget_DKK,1.1084466677857563e-12
+tester_budget_DKK,2.4384930696896845e-05
+Q2_IR_shortfall_vs_Cref_DKK,7.318590178329032e-13
+tester_IR_shortfall_vs_R_DKK,1.2691449086332796e-05
+tester_IR_shortfall_vs_Cref_DKK,1.9516527416385543e-05
+tester_IR_violations_vs_Cref,0.0
