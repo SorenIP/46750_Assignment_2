@@ -1,0 +1,14 @@
+,value
+variant,budget_balance_relaxed_ir
+set,expected (validation)
+status_Q2,interrupted_best_found
+Q2_community_cost_DKK,382.8518357923616
+tester_community_cost_DKK,382.85213812115217
+Q2_exceedance_kWh,1.3699594500004553
+tester_exceedance_kWh,1.3699848913011898
+Q2_budget_DKK,3.410605131648481e-13
+tester_budget_DKK,-0.00026404360616538725
+Q2_IR_shortfall_vs_R_DKK,34.16386975141418
+tester_IR_shortfall_vs_R_DKK,34.16389394771005
+tester_IR_shortfall_vs_Cref_DKK,35.67139931114275
+tester_IR_violations_vs_Cref,10.0

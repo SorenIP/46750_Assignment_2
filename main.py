@@ -5,6 +5,9 @@
     python main.py --day d4                          # another day of the week (and that day's cap)
     python main.py --members                         # also print every member's Assignment 1 summary
     python main.py --demo                            # also run the scenario-generation demonstration (Question 3)
+    python main.py --DP-ind                          # Question 2: prices per member, BB + IR vs C_ref (Q3 baseline)
+    python main.py --Q3-scenarios --DP-ind --Q3-baseline --Q3-plot      # Question 3: scenarios, M^D stress test, figure
+    python main.py --Q3-baseline ind_ir_ref budget_balance --Q3-sets OOS_N100 IS_N10
 
 No model is provided: build your Assignment 1 model class on the ``InputData`` of each member, then the community
 models of the assignment (R, I, C, DP, ...) on top of it, one function per experiment, writing to ``results/``.
@@ -37,6 +40,16 @@ def main() -> None:
     ap.add_argument("--C", action="store_true", help="solve model C (community contract), compare with R and I, save results/<community>/C/")
     ap.add_argument("--DP-base", action="store_true", help="test Question 2 posted-price responses at model C's internal prices")
     ap.add_argument("--DP-variants", nargs="*", metavar="NAME", help="solve Question 2 price variants one after the other with a live progress line, saving each when done (no time limit); optionally name some: cap_only budget_balance budget_balance_ir budget_balance_relaxed_ir")
+    ap.add_argument("--DP-ind", action="store_true", help="solve DP^ind: one price vector per member, budget balance and IR against C_ref = min(C_R, C_I) "
+                                                          "(Q2 recommendation and Q3 baseline M^D; about 1 min), save results/base/DP_queue/ind_ir_ref/")
+    ap.add_argument("--Q3-scenarios", action="store_true", help="Question 3 (D1): draw, check and save the preference scenarios "
+                                                                "(IS_N5, IS_N10, IS_N10_cv, OOS_N100; fixed seeds), save results/base/Q3_scenarios/")
+    ap.add_argument("--Q3-baseline", nargs="*", metavar="VARIANT", help="Question 3 (D6+D9+D2): test the deterministic prices M^D on the "
+                                                                        "out-of-sample scenarios (default: ind_ir_ref; also budget_balance, "
+                                                                        "budget_balance_relaxed_ir), save results/base/Q3_baseline/")
+    ap.add_argument("--Q3-sets", nargs="+", default=["OOS_N100"], metavar="SET", help="scenario sets for --Q3-baseline (default OOS_N100)")
+    ap.add_argument("--Q3-plot", action="store_true", help="Question 3 (D2): stress-test figure of the baselines, "
+                                                           "save results/base/Q3_baseline/D2_stress_test.pdf/.png")
     ap.add_argument("--DP-gap", type=float, default=1e-6, help="relative MIP gap at which a DP variant counts as solved (default 1e-6; e.g. 0.01 stops at 1%%)")
     ap.add_argument("--DP-plain", action="store_true", help="switch off the DP speed-ups (bounds on multipliers, lower-bound cut from C, price start)")
     ap.add_argument("--sweep", action="store_true", help="sensitivity study (discount, cap scale, penalty) for R, I and C, save results/<community>/sweep/")
@@ -99,6 +112,30 @@ def main() -> None:
             if "metrics" in result:
                 print({k: float(f"{v:.6g}") if isinstance(v, (float, int)) else v
                        for k, v in result["metrics"].items()})
+    if args.DP_ind:
+        import pandas as pd
+        import run_dp_queue
+        if (args.community, args.day) != ("base", "d1"):
+            print("Note: --DP-ind always solves the base community on day d1 (the Question 2/3 base case)")
+        job = {"name": "ind_ir_ref", "kind": "ir", "groups": "individual", "ir_ref": "best",
+               "limit_s": 900, "gap": args.DP_gap}
+        info = run_dp_queue.run_job(job)
+        row = pd.read_csv(run_dp_queue.OUT / "queue_summary.csv", index_col="stage").loc["ind_ir_ref"]
+        print(f"DP^ind (prices per member, BB + IR vs C_ref): {row['status']} in {info['seconds']:.0f} s")
+        print({k: float(f"{row[k]:.6g}") for k in ("community_cost_DKK", "C_cost_DKK", "mip_gap", "exceedance_kWh",
+                                                     "budget_balance_residual_DKK", "total_IR_shortfall_DKK",
+                                                     "members_worse_off_vs_R")})
+        print(f"saved to {run_dp_queue.OUT / 'ind_ir_ref'}")
+    # Question 3 (base community, day d1). Order of a full run: --Q3-scenarios --DP-ind --Q3-baseline --Q3-plot
+    if args.Q3_scenarios:
+        from src import q3_scenarios
+        q3_scenarios.main()
+    if args.Q3_baseline is not None:
+        from src import q3_evaluate
+        q3_evaluate.main(args.Q3_baseline or ["ind_ir_ref"], args.Q3_sets)
+    if args.Q3_plot:
+        from src import q3_plot_d2
+        q3_plot_d2.main()
     if args.sweep:
         import pandas as pd
         df = run_sweep(com, RESULTS_DIR / args.community / "sweep")

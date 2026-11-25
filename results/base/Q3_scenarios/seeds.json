@@ -1,0 +1,32 @@
+{
+ "seeds": {
+  "in_sample": 1,
+  "in_sample_crossval": 2,
+  "out_of_sample": 1000,
+  "large_sample": 12345
+ },
+ "sets": {
+  "IS_N5": [
+   5,
+   1
+  ],
+  "IS_N10": [
+   10,
+   1
+  ],
+  "IS_N10_cv": [
+   10,
+   2
+  ],
+  "OOS_N100": [
+   100,
+   1000
+  ]
+ },
+ "large_sample_check": {
+  "mean_set": 1.0,
+  "mean_sample": 0.9996027323027239,
+  "var_set": 0.013333333333333327,
+  "var_sample": 0.013317804851998597
+ }
+}
